@@ -339,9 +339,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>com.googlecode.flyway</groupId>
+        <groupId>org.flywaydb</groupId>
         <artifactId>flyway-core</artifactId>
-        <version>1.4.2</version>
+        <version>4.0.3</version>
       </dependency>
       <dependency>
         <groupId>commons-beanutils</groupId>
@@ -634,7 +634,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <headerBaseDir>${basedir}</headerBaseDir>
     <pathtoHeader>${headerBaseDir}/header.txt</pathtoHeader>
-    <commonVersion>0.60</commonVersion>
+    <commonVersion>0.61-SNAPSHOT</commonVersion>
     <isJsCompressed>true</isJsCompressed>
     <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
   </properties>

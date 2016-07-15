@@ -177,6 +177,8 @@
         <!--This is required because if all the connections are taken and threads are waiting, they might be blocked
         forever. But if we specify this timeout, an exception will be raised in case of threads being blocked for too long.-->
         <property name="checkoutTimeout" value="10000"/>
+        <!-- property name="unreturnedConnectionTimeout" value="15"/>
+        <property name="debugUnreturnedConnectionStackTraces" value="true"/ -->
       </bean>
     </property>
   </bean>
@@ -279,8 +281,9 @@
         init-method="migrate"
         depends-on="flyway_common_init">
     <property name="dataSource" ref="dataSource"/>
-    <property name="basePackage" value="org.jtalks.common.migrations"/>
-    <property name="baseDir" value="/org/jtalks/common/migrations"/>
+    <!-- <property name="basePackage" value="org.jtalks.common.migrations"/>
+    <property name="baseDir" value="/org/jtalks/common/migrations"/> -->
+    <property name="locations" value="org.jtalks.jcommune.migrations"/>
     <property name="table" value="common_schema_version"/>
     <property name="enabled" value="${migrations_enabled}"/>
   </bean>
@@ -295,8 +298,9 @@
         init-method="migrate"
         depends-on="flyway_jcommune_init">
     <property name="dataSource" ref="dataSource"/>
-    <property name="basePackage" value="org.jtalks.jcommune.migrations"/>
-    <property name="baseDir" value="/org/jtalks/jcommune/migrations"/>
+    <!-- <property name="basePackage" value="org.jtalks.jcommune.migrations"/>
+    <property name="baseDir" value="/org/jtalks/jcommune/migrations"/> -->
+    <property name="locations" value="org.jtalks.jcommune.migrations"/>
     <property name="table" value="jcommune_schema_version"/>
     <property name="enabled" value="${migrations_enabled}"/>
   </bean>

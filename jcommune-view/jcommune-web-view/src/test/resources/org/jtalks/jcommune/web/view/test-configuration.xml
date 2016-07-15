@@ -50,19 +50,28 @@
     <constructor-arg index="0" ref="testFilters"/>
   </bean>
   <!--We don't use FlywayWrapper here because we don't need to disable migrations and also FlywayWrapper is MySQL-oriented-->
-  <bean id="flyway_jcommune_init" class="com.googlecode.flyway.core.Flyway"
-        init-method="init">
+  <!-- bean id="flyway_jcommune_init" class="org.flywaydb.core.Flyway"
+        init-method="baseline">
     <property name="dataSource" ref="dataSource"/>
     <property name="table" value="jcommune_schema_version"/>
-  </bean>
-  <bean id="flyway_jcommune" class="com.googlecode.flyway.core.Flyway"
-        init-method="migrate"
-        depends-on="flyway_jcommune_init">
-    <property name="dataSource" ref="dataSource"/>
-    <property name="basePackage" value="org.jtalks.jcommune.migrations/test"/>
-    <property name="baseDir" value="/org/jtalks/jcommune/migrations/test"/>
+  </bean -->
+  <bean id="flyway_jcommune" class="org.flywaydb.core.Flyway"
+        init-method="migrate">
+        <!-- depends-on="flyway_jcommune_init" -->
+    <property name="baselineOnMigrate" value="true"/>
+    <property name="locations" value="org.jtalks.jcommune.migrations/test"/>
     <property name="table" value="jcommune_schema_version"/>
+    <property name="dataSource" ref="dataSource"/>
   </bean>
+  <!-- bean id="hsqldb_manager" class="org.hsqldb.util.DatabaseManagerSwing"
+        init-method="main">
+    <constructor-arg>
+      <array value-type="java.lang.String">
+        <value>url</value>
+        <value>jdbc:hsqldb:mem:jtalks_testdb</value>
+      </array>
+    </constructor-arg>
+  </bean -->
 
   <bean id="modelAndViewUsers" name="pageUsers, users" class="org.jtalks.jcommune.test.utils.page.PageUsers"/>
   <bean id="jsonResponseUsers" name="popUpUsers" class="org.jtalks.jcommune.test.utils.popup.PopUpUsers"/>
