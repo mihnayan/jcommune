@@ -60,6 +60,11 @@ public class BbToHtmlConverter implements PluginBbCodeService {
         return bbCodeService.convertBbToHtml(post);
     }
 
+    @Override
+    public String filterHtml(String html) {
+        return bbCodeService.filterHtml(html);
+    }
+
     /**
      * Sets bb-code service. Should be used once, during initialization
      *

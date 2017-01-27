@@ -20,6 +20,8 @@ import org.jtalks.jcommune.model.entity.JCUser;
 import org.jtalks.jcommune.plugin.api.service.PluginBbCodeService;
 import org.jtalks.jcommune.service.bb2htmlprocessors.TextPostProcessor;
 import org.kefirsf.bb.BBProcessorFactory;
+import org.kefirsf.bb.ConfigurationFactory;
+import org.kefirsf.bb.EscapeXmlProcessorFactory;
 import org.kefirsf.bb.TextProcessor;
 
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ public class BBCodeService implements PluginBbCodeService {
     private final TextProcessor processor = BBProcessorFactory.getInstance().create();
     /** Processor to strip bb-codes */
     private final TextProcessor stripBBCodesProcessor = BBProcessorFactory.getInstance().createFromResource("kefirbb-strip-config.xml");
+
+    private final TextProcessor filterHtmlProcessor = EscapeXmlProcessorFactory.getInstance().create();
     /** Preprocessors of BB encoded text used before actual BB2HTML converter */
     private final List<TextProcessor> preprocessors = new ArrayList<>();
 
@@ -83,6 +87,11 @@ public class BBCodeService implements PluginBbCodeService {
             bbEncodedText = postpreprocessor.postProcess(bbEncodedText);
         }
         return bbEncodedText;
+    }
+
+    @Override
+    public String filterHtml(String html) {
+        return filterHtmlProcessor.process(html);
     }
 
     /**
