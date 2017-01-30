@@ -20,6 +20,7 @@ import org.jtalks.common.model.entity.Section;
 import org.jtalks.jcommune.model.entity.*;
 import org.jtalks.jcommune.plugin.api.exceptions.NotFoundException;
 import org.jtalks.jcommune.plugin.api.service.*;
+import org.jtalks.jcommune.plugin.api.service.nontransactional.BbToHtmlConverter;
 import org.jtalks.jcommune.plugin.api.web.dto.Breadcrumb;
 import org.jtalks.jcommune.plugin.api.web.dto.PostDto;
 import org.jtalks.jcommune.plugin.api.web.dto.TopicDto;
@@ -28,6 +29,7 @@ import org.jtalks.jcommune.plugin.api.web.locale.JcLocaleResolver;
 import org.jtalks.jcommune.plugin.api.web.util.BreadcrumbBuilder;
 import org.jtalks.jcommune.plugin.questionsandanswers.QuestionsAndAnswersPlugin;
 import org.jtalks.jcommune.plugin.questionsandanswers.dto.CommentDto;
+import org.jtalks.jcommune.service.nontransactional.BBCodeService;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.context.ApplicationContext;
@@ -512,11 +514,14 @@ public class QuestionsAndAnswersControllerTest {
 
     @Test
     public void testAddCommentSuccess() throws Exception {
-        PostComment comment = getComment();
+        PostComment comment = getComment("test [b]Bold text[/b]");
         CommentDto dto = new CommentDto();
         dto.setPostId(1);
         dto.setBody(comment.getBody());
 
+        BbToHtmlConverter converter = (BbToHtmlConverter) BbToHtmlConverter.getInstance();
+        converter.setBbCodeService(new BBCodeService());
+        when(controller.getBbCodeService()).thenReturn(converter);
         when(postService.get(anyLong())).thenReturn(new Post(null, null));
         when(postService.addComment(eq(dto.getPostId()), anyMap(), eq(dto.getBody()))).thenReturn(comment);
 
@@ -524,7 +529,8 @@ public class QuestionsAndAnswersControllerTest {
 
         assertEquals(response.getStatus(), JsonResponseStatus.SUCCESS);
         assertTrue(response.getResult() instanceof CommentDto);
-        assertEquals(((CommentDto)response.getResult()).getBody(), dto.getBody());
+        assertEquals(((CommentDto)response.getResult()).getBody(),
+                "test <span style=\"font-weight:bold;\">Bold text</span>");
     }
 
     @Test
@@ -557,7 +563,7 @@ public class QuestionsAndAnswersControllerTest {
 
     @Test
     public void testEditCommentSuccess() throws Exception {
-        PostComment comment = getComment();
+        PostComment comment = getComment("test");
         CommentDto dto = new CommentDto();
         dto.setBody(comment.getBody());
 
@@ -706,10 +712,10 @@ public class QuestionsAndAnswersControllerTest {
         return topic;
     }
 
-    private PostComment getComment() {
+    private PostComment getComment(String commentBody) {
         PostComment comment = new PostComment();
         comment.setAuthor(new JCUser("test", "example@test.com", "pwd"));
-        comment.setBody("test");
+        comment.setBody(commentBody);
         comment.setId(1);
         return comment;
     }

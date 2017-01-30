@@ -95,6 +95,8 @@ public class QuestionsAndAnswersController implements ApplicationContextAware, P
     public static final String COMMENT_ID = "commentId";
     private static final String HTML_ESCAPER = "htmlEscaper";
 
+    // custom processor is used for escaping of HTML because
+    // standard Velocity escaping utility not correct displays emoji.
     private TextProcessor htmlEscaper = BBProcessorFactory.getInstance().createFromResource("escapeHtmlConfig.xml");
 
     private BreadcrumbBuilder breadcrumbBuilder = new BreadcrumbBuilder();
@@ -215,7 +217,7 @@ public class QuestionsAndAnswersController implements ApplicationContextAware, P
         data.put(POST_PAGE, new PageImpl<>(getSortedPosts(topic.getPosts())));
         data.put(BREADCRUMB_LIST, breadcrumbBuilder.getForumBreadcrumb(topic));
         data.put(SUBSCRIBED, false);
-        data.put(CONVERTER, BbToHtmlConverter.getInstance());
+        data.put(CONVERTER, getBbCodeService());
         data.put(HTML_ESCAPER, htmlEscaper);
         data.put(VIEW_LIST, getLocationService().getUsersViewing(topic));
         data.put(POST_DTO, postDto);
@@ -413,7 +415,7 @@ public class QuestionsAndAnswersController implements ApplicationContextAware, P
             data.put(BREADCRUMB_LIST, breadcrumbBuilder.getForumBreadcrumb(topic));
             data.put(SUBSCRIBED, false);
             data.put(RESULT, result);
-            data.put(CONVERTER, BbToHtmlConverter.getInstance());
+            data.put(CONVERTER, getBbCodeService());
             data.put(VIEW_LIST, getLocationService().getUsersViewing(topic));
             data.put(POST_DTO, postDto);
             data.put(LIMIT_OF_POSTS_ATTRIBUTE, LIMIT_OF_POSTS_VALUE);
@@ -500,7 +502,7 @@ public class QuestionsAndAnswersController implements ApplicationContextAware, P
         } catch (NotFoundException ex) {
             return new FailJsonResponse(JsonResponseReason.ENTITY_NOT_FOUND);
         }
-        comment.setBody(BbToHtmlConverter.getInstance().convertBbToHtml(comment.getBody()));
+        comment.setBody(getBbCodeService().convertBbToHtml(comment.getBody()));
         JodaDateTimeTool dateTimeTool = new JodaDateTimeTool(request);
         return new JsonResponse(JsonResponseStatus.SUCCESS, new CommentDto(comment, dateTimeTool));
     }
@@ -761,6 +763,15 @@ public class QuestionsAndAnswersController implements ApplicationContextAware, P
         return TransactionalPluginCommentService.getInstance();
     }
 
+
+    /**
+     * Needed for mocking
+     *
+     * @return service for handling bb-codes
+     */
+    PluginBbCodeService getBbCodeService() {
+        return BbToHtmlConverter.getInstance();
+    }
 
     /**
      * Sets specified {@link BreadcrumbBuilder}

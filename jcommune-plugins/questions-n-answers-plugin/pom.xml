@@ -44,6 +44,11 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
     </dependency>
+      <dependency>
+          <groupId>org.jtalks.jcommune</groupId>
+          <artifactId>jcommune-service</artifactId>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 
   <build>

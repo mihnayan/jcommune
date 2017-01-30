@@ -39,11 +39,4 @@ public interface PluginBbCodeService {
      * @return the same text with HTML markup to be shown
      */
     String convertBbToHtml(String bbEncodedText);
-
-    /**
-     * Escaping and filtering HTML to avoid XSS-attacks and correct display HTML-text in the messages
-     * @param html string containing HTML text
-     * @return
-     */
-    String filterHtml(String html);
 }
