@@ -581,7 +581,7 @@ function getCommentHtml(comment) {
     }
     result = result + "</div><div class='comment-date pull-left'>" + comment.formattedCreationDate + "</div><div class='cleared'></div>"
         + "</div><div class='comment-body'><span id='body-" + comment.id + "' class='comment-content'>"
-        + Utils.lf2br(Utils.htmlEncode(comment.body))
+        + Utils.lf2br(comment.body)
         + "</span><div id='edit-" + comment.id + "' class='control-group comment-container edit' style='display: none'>"
         + "<textarea id='editable-" + comment.id + "' name='commentBody' class='comment-textarea edit-comment' rows='3'>"
         + comment.body + "</textarea> <div class='comment-buttons-container'><div class='pull-right'>"

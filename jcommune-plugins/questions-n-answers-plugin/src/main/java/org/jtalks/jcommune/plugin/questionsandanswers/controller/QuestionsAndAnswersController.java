@@ -38,7 +38,7 @@ import org.jtalks.jcommune.plugin.api.web.velocity.tool.JodaDateTimeTool;
 import org.jtalks.jcommune.plugin.api.web.velocity.tool.PermissionTool;
 import org.jtalks.jcommune.plugin.questionsandanswers.QuestionsAndAnswersPlugin;
 import org.jtalks.jcommune.plugin.questionsandanswers.dto.CommentDto;
-import org.kefirsf.bb.BBProcessorFactory;
+import org.kefirsf.bb.EscapeXmlProcessorFactory;
 import org.kefirsf.bb.TextProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -97,7 +97,7 @@ public class QuestionsAndAnswersController implements ApplicationContextAware, P
 
     // custom processor is used for escaping of HTML because
     // standard Velocity escaping utility not correct displays emoji.
-    private TextProcessor htmlEscaper = BBProcessorFactory.getInstance().createFromResource("escapeHtmlConfig.xml");
+    private TextProcessor htmlEscaper = EscapeXmlProcessorFactory.getInstance().create();
 
     private BreadcrumbBuilder breadcrumbBuilder = new BreadcrumbBuilder();
 
@@ -502,9 +502,11 @@ public class QuestionsAndAnswersController implements ApplicationContextAware, P
         } catch (NotFoundException ex) {
             return new FailJsonResponse(JsonResponseReason.ENTITY_NOT_FOUND);
         }
-        comment.setBody(getBbCodeService().convertBbToHtml(comment.getBody()));
+
         JodaDateTimeTool dateTimeTool = new JodaDateTimeTool(request);
-        return new JsonResponse(JsonResponseStatus.SUCCESS, new CommentDto(comment, dateTimeTool));
+        CommentDto newComment = new CommentDto(comment, dateTimeTool);
+        newComment.setBody(getBbCodeService().convertBbToHtml(newComment.getBody()));
+        return new JsonResponse(JsonResponseStatus.SUCCESS, newComment);
     }
 
     /**
