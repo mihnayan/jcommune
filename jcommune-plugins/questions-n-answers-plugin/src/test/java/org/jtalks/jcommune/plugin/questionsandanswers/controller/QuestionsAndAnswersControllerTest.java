@@ -514,7 +514,11 @@ public class QuestionsAndAnswersControllerTest {
 
     @Test
     public void testAddCommentSuccess() throws Exception {
-        PostComment comment = getComment("test [b]Bold text[/b]");
+        String testedText = "test [b]Bold text[/b] <button onclick=\"alert('Ok');\">Ok</button>";
+        String expectedText = "test <span style=\"font-weight:bold;\">Bold text</span> "
+                + "&lt;button onclick=&quot;alert(&apos;Ok&apos;);&quot;&gt;Ok&lt;/button&gt;";
+
+        PostComment comment = getComment(testedText);
         CommentDto dto = new CommentDto();
         dto.setPostId(1);
         dto.setBody(comment.getBody());
@@ -529,8 +533,7 @@ public class QuestionsAndAnswersControllerTest {
 
         assertEquals(response.getStatus(), JsonResponseStatus.SUCCESS);
         assertTrue(response.getResult() instanceof CommentDto);
-        assertEquals(((CommentDto)response.getResult()).getBody(),
-                "test <span style=\"font-weight:bold;\">Bold text</span>");
+        assertEquals(((CommentDto)response.getResult()).getBody(), expectedText);
     }
 
     @Test
@@ -563,17 +566,24 @@ public class QuestionsAndAnswersControllerTest {
 
     @Test
     public void testEditCommentSuccess() throws Exception {
-        PostComment comment = getComment("test");
+        String testedText = "test [i]Italic text[/i] <div style=\"color: red;\">red</div>";
+        String expectedText = "test <span style=\"font-style:italic;\">Italic text</span> "
+                + "&lt;div style=&quot;color: red;&quot;&gt;red&lt;/div&gt;";
+
+        PostComment comment = getComment(testedText);
         CommentDto dto = new CommentDto();
         dto.setBody(comment.getBody());
 
+        BbToHtmlConverter converter = (BbToHtmlConverter) BbToHtmlConverter.getInstance();
+        converter.setBbCodeService(new BBCodeService());
+        when(controller.getBbCodeService()).thenReturn(converter);
         when(commentService.updateComment(eq(dto.getId()), eq(dto.getBody()), anyLong())).thenReturn(comment);
 
         JsonResponse response = controller.editComment(dto, result, 1);
 
         assertEquals(response.getStatus(), JsonResponseStatus.SUCCESS);
         assertTrue(response.getResult() instanceof String);
-        assertEquals(response.getResult(), dto.getBody());
+        assertEquals(response.getResult(), expectedText);
     }
 
     @Test

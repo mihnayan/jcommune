@@ -531,7 +531,8 @@ public class QuestionsAndAnswersController implements ApplicationContextAware, P
         } catch (NotFoundException ex) {
             return new FailJsonResponse(JsonResponseReason.ENTITY_NOT_FOUND);
         }
-        return new JsonResponse(JsonResponseStatus.SUCCESS, updatedComment.getBody());
+        return new JsonResponse(JsonResponseStatus.SUCCESS,
+                getBbCodeService().convertBbToHtml(updatedComment.getBody()));
     }
 
     /**
