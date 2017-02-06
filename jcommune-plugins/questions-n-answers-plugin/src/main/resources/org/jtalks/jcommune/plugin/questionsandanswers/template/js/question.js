@@ -227,8 +227,8 @@ var editSubmitHandler = function(e) {
         data: JSON.stringify(commentDto),
         success: function(data) {
             if(data.status == 'SUCCESS') {
-                $("#body-" + commentId).text(data.result);
-                $("#editable-" + commentId).text(data.result);
+                $("#body-" + commentId).html(data.result);
+                $("#editable-" + commentId).html(data.result);
                 enableViewMode(commentId);
             } else if (data.reason == 'VALIDATION') {
                 enableEditMode(commentId);
